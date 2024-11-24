@@ -20,11 +20,11 @@ public class DemoAutoNewsCrawler extends BreadthCrawler {
     public DemoAutoNewsCrawler(String crawlPath, boolean autoParse) {
         super(crawlPath, autoParse);
         /*start pages*/
-        this.addSeed("https://blog.github.com/");
-        for(int pageIndex = 2; pageIndex <= 5; pageIndex++) {
-            String seedUrl = String.format("https://blog.github.com/page/%d/", pageIndex);
-            this.addSeed(seedUrl);
-        }
+        this.addSeed("https://www.gkzenti.cn/paper/1720413487446");
+//        for(int pageIndex = 2; pageIndex <= 5; pageIndex++) {
+//            String seedUrl = String.format("https://blog.github.com/page/%d/", pageIndex);
+//            this.addSeed(seedUrl);
+//        }
 
         /*fetch url like "https://blog.github.com/2018-07-13-graphql-for-octokit/" */
         this.addRegex("https://blog.github.com/[0-9]{4}-[0-9]{2}-[0-9]{2}-[^/]+/");
@@ -33,7 +33,7 @@ public class DemoAutoNewsCrawler extends BreadthCrawler {
         /*do not fetch url contains #*/
         //this.addRegex("-.*#.*");
 
-        setThreads(50);
+        setThreads(1);
         getConf().setTopN(100);
 
         //enable resumable mode
@@ -43,6 +43,7 @@ public class DemoAutoNewsCrawler extends BreadthCrawler {
     @Override
     public void visit(Page page, CrawlDatums next) {
         String url = page.url();
+        System.out.println("new String(page.content()) = " + new String(page.content()));
         /*if page is news page*/
         if (page.matchUrl("https://blog.github.com/[0-9]{4}-[0-9]{2}-[0-9]{2}[^/]+/")) {
 
