@@ -15,6 +15,7 @@ repositories {
 
 dependencies {
     runtimeOnly 'com.h2database:h2:2.2.224'
+    api 'cn.edu.hfut.dmic.webcollector:WebCollector:2.73-alpha'
 
 
 //    api 'com.alibaba:fastjson:1.2.47'
@@ -42,7 +43,7 @@ intellij {
     ideaDependencyCachePath = "$gradle.gradleUserHomeDir/caches/modules-2/files-2.1/com.jetbrains.intellij.idea"
 
     runIde {
-        jvmArgs = project.runIdeJvmArgs.split(',').toList()
+        jvmArgs = project.runIdeJvmArgs?.split(',')?.toList()?:[]
     }
 
     patchPluginXml {
