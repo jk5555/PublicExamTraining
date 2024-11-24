@@ -67,11 +67,14 @@ public class HttpRequestUtils {
      */
     private static String[] convertHeaderToArray(Map<String, String> header) {
         List<String> headerList = new ArrayList<>();
-        if (header != null) {
+        if (header != null && !header.isEmpty()) {
             for (Map.Entry<String, String> entry : header.entrySet()) {
                 headerList.add(entry.getKey());
                 headerList.add(entry.getValue());
             }
+        } else {
+            headerList.add("1");
+            headerList.add("1");
         }
         return headerList.toArray(new String[0]);
     }
@@ -164,14 +167,6 @@ public class HttpRequestUtils {
     @FunctionalInterface
     private interface Callable<V> {
         V call(HttpRequest request);
-    }
-
-
-    public static void main(String[] args) {
-        String s = doGet("https://www.gkzenti.cn/api/json?cls=行测&province=湖北");
-        System.err.println(s);
-//        String s1 = doPostNoBody("");
-//        System.err.println(s1);
     }
 
 
