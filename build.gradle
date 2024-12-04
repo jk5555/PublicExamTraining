@@ -1,27 +1,29 @@
 plugins {
     id 'java-library'
     id 'org.jetbrains.intellij' version '1.17.4'
-    id 'org.jetbrains.kotlin.jvm' version "1.9.25"
+    id 'org.jetbrains.kotlin.jvm' version "1.9.23"
 }
 
 group = "com.kun.plugin"
 version = "0.0.1"
 
 repositories {
-    mavenLocal()
-    maven { url 'https://jitpack.io' }
-    maven { url 'https://maven.aliyun.com/repository/jcenter' }
-    maven { url 'https://maven.aliyun.com/repository/google' }
-    maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
-    maven { url 'https://maven.aliyun.com/repository/public' }
+//    maven { url 'https://jitpack.io' }
+//    maven { url 'https://maven.aliyun.com/repository/jcenter' }
+//    maven { url 'https://maven.aliyun.com/repository/google' }
+//    maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+//    maven { url 'https://maven.aliyun.com/repository/public' }
     mavenCentral()
+    google()
+    gradlePluginPortal()
+    mavenLocal()
 }
 
 dependencies {
     runtimeOnly 'com.h2database:h2:2.2.224'
-    api 'cn.edu.hfut.dmic.webcollector:WebCollector:2.73-alpha'
-    api 'us.codecraft:webmagic-core:0.7.3'
-    api 'us.codecraft:webmagic-extension:0.7.3'
+    api 'us.codecraft:webmagic-core:1.0.2'
+//    api 'us.codecraft:webmagic-extension:0.7.3'
+//    api fileTree(dir: 'src/main/resources/lib', include: ['*.jar'])
 
 
 //    api 'com.alibaba:fastjson:1.2.47'
@@ -33,7 +35,6 @@ dependencies {
 //    api 'com.vladsch.flexmark:flexmark:0.62.2'
 //    api 'com.vladsch.flexmark:flexmark-ext-attributes:0.62.2'
 //    api 'io.github.biezhi:TinyPinyin:2.0.3.RELEASE'
-//    //api fileTree(dir: 'src/main/resources/lib', include: ['*.jar'])
 
 }
 

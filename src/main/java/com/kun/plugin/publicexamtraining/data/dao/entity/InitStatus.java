@@ -1,4 +1,4 @@
-package com.kun.plugin.publicexamtraining.data.dao.pojo;
+package com.kun.plugin.publicexamtraining.data.dao.entity;
 
 
 
