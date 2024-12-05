@@ -86,6 +86,14 @@ public class OpenQuestionProcessor implements PageProcessor {
                 questionType = QuestionTypeHelper.getQuestionType(StringUtils.trim(questionTypeText));
                 continue;
             }
+            //替换图片url
+            html.xpath("//img/@src").all().forEach(url -> {
+                String newUrl = "";
+                if (StringUtils.startsWith(url, "//")) {
+                    newUrl = "https:" + url;
+                }
+                html.regex(url).replace(url, newUrl);
+            });
             Question question = new Question();
             question.setPaperId(paperId);
             question.setSource(title);
