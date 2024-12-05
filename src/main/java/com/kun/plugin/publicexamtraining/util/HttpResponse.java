@@ -1,10 +1,5 @@
 package com.kun.plugin.publicexamtraining.util;
 
-
-
-
-
-
 public class HttpResponse {
 
     private int statusCode;

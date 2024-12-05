@@ -9,8 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-
-
 public class HttpRequest {
 
     private final String url;

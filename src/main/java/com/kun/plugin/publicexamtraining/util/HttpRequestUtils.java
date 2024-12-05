@@ -44,7 +44,6 @@ public class HttpRequestUtils {
     }
 
 
-
     public static String doPost(String url, String body) {
         HttpResponse httpResponse = executePost(HttpRequest.builderPost(url, contentTypeJson).body(body).cache(true).build());
         if (httpResponse.isSuccess()) {
@@ -90,7 +89,7 @@ public class HttpRequestUtils {
                 java.net.http.HttpRequest httpRequestModel = java.net.http.HttpRequest.newBuilder()
                         .uri(URI.create(request.getUrl()))
                         .headers(convertHeaderToArray(header))
-                        .header( "Content-Type", contentTypeJson)
+                        .header("Content-Type", contentTypeJson)
                         .GET()
                         .build();
 
@@ -119,7 +118,7 @@ public class HttpRequestUtils {
                 java.net.http.HttpRequest httpRequestModel = java.net.http.HttpRequest.newBuilder()
                         .uri(URI.create(request.getUrl()))
                         .headers(convertHeaderToArray(header))
-                        .header( "Content-Type", "application/json;charset=UTF-8")
+                        .header("Content-Type", "application/json;charset=UTF-8")
                         .POST(java.net.http.HttpRequest.BodyPublishers.ofString(request.getBody()))
                         .build();
 
@@ -168,8 +167,6 @@ public class HttpRequestUtils {
     private interface Callable<V> {
         V call(HttpRequest request);
     }
-
-
 
 
 }

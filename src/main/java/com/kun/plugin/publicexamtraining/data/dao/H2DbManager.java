@@ -1,15 +1,12 @@
 package com.kun.plugin.publicexamtraining.data.dao;
 
-import java.sql.Date;
-
-
 import com.kun.plugin.publicexamtraining.common.Constants;
 import com.kun.plugin.publicexamtraining.data.dao.entity.PaperEntity;
 import com.kun.plugin.publicexamtraining.data.dao.entity.QuestionEntity;
+import com.kun.plugin.publicexamtraining.util.CommonUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class H2DbManager {
@@ -110,7 +107,7 @@ public class H2DbManager {
             for (QuestionEntity question : questionEntityList) {
                 count++;
                 if (StringUtils.isNotBlank(question.getQuestionStem()) && StringUtils.isNotBlank(question.getAnswerSelect())) {
-                    statement.setInt(1, question.getPaperId());
+                    statement.setInt(1, CommonUtils.ifNull(question.getPaperId(), 0));
                     statement.setString(2, question.getSource());
                     statement.setString(3, question.getQuestionType());
                     statement.setString(4, question.getQuestionStem());

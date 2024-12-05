@@ -3,15 +3,18 @@ package com.kun.plugin.publicexamtraining.data;
 import com.kun.plugin.publicexamtraining.data.dao.H2DbManager;
 import com.kun.plugin.publicexamtraining.data.dao.entity.QuestionEntity;
 import com.kun.plugin.publicexamtraining.data.model.Paper;
+import com.kun.plugin.publicexamtraining.data.spider.OpenQuestionPipeline;
 import com.kun.plugin.publicexamtraining.data.spider.OpenQuestionProcessor;
+import com.kun.plugin.publicexamtraining.util.QuestionTypeHelper;
+import com.kun.plugin.publicexamtraining.util.TextMatcher;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Test;
 import us.codecraft.webmagic.Spider;
-import us.codecraft.webmagic.pipeline.ConsolePipeline;
 import us.codecraft.webmagic.scheduler.QueueScheduler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class DataTest {
 
@@ -67,11 +70,29 @@ public class DataTest {
     @Test
     public void test4() {
         Spider.create(new OpenQuestionProcessor())
-                .addPipeline(new ConsolePipeline())
+                .addPipeline(new OpenQuestionPipeline())
                 .setScheduler(new QueueScheduler())//去重
                 .addUrl("https://www.gkzenti.cn/paper/1720413487446")
                 .thread(2)
                 .run();
+    }
+
+    @Test
+    public void test5() {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        String text = "五、资料 分析。所给出的图、表、文字或综合性资料均有若干个问题要你回答。你应根据资料提供的信息进行分析、比较、计算和判断处理。";
+        Set<String> words = Set.of("资料分析");
+        double matchScore = TextMatcher.calculateMatchScore(text, words);
+        System.out.println("匹配值: " + matchScore);
+        stopWatch.stop();
+        System.out.println(stopWatch.formatTime());
+    }
+
+    @Test
+    public void test6() {
+        String questionType = QuestionTypeHelper.getQuestionType("(一)小垃圾系统级量关系别");
+        System.out.println("----------->" +questionType);
     }
 
 
