@@ -13,4 +13,10 @@ public class Question extends QuestionEntity {
     public void setNumber(String number) {
         this.number = number;
     }
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
+
 }

@@ -5,16 +5,24 @@ import com.kun.plugin.publicexamtraining.data.dao.entity.QuestionEntity;
 import com.kun.plugin.publicexamtraining.data.model.Paper;
 import com.kun.plugin.publicexamtraining.data.spider.OpenQuestionPipeline;
 import com.kun.plugin.publicexamtraining.data.spider.OpenQuestionProcessor;
+import com.kun.plugin.publicexamtraining.util.HttpRequestUtils;
 import com.kun.plugin.publicexamtraining.util.QuestionTypeHelper;
 import com.kun.plugin.publicexamtraining.util.TextMatcher;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Test;
 import us.codecraft.webmagic.Spider;
+import us.codecraft.webmagic.pipeline.FilePipeline;
 import us.codecraft.webmagic.scheduler.QueueScheduler;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DataTest {
 
@@ -78,6 +86,26 @@ public class DataTest {
     }
 
     @Test
+    public void test41() {
+        Spider.create(new OpenQuestionProcessor())
+                .addPipeline(new FilePipeline("data/cache/"))
+                .setScheduler(new QueueScheduler())//去重
+                .addUrl("https://www.gkzenti.cn/paper/1720413487446")
+                .thread(2)
+                .run();
+    }
+
+    @Test
+    public void test42() {
+        Spider.create(new OpenQuestionProcessor())
+                .addPipeline(new FilePipeline("data/cache/"))
+                .setScheduler(new QueueScheduler())//去重
+                .addUrl("https://www.gkzenti.cn/paper/1720413487446")
+                .thread(2)
+                .run();
+    }
+
+    @Test
     public void test5() {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
@@ -94,6 +122,32 @@ public class DataTest {
         String questionType = QuestionTypeHelper.getQuestionType("(一)小垃圾系统级量关系别");
         System.out.println("----------->" +questionType);
     }
+
+    @Test
+    public void test7() {
+        Pattern pattern = Pattern.compile("^(\\d+)[、，.:：]?([A-Za-z])$");
+        String text = "123：A";
+        Matcher matcher = pattern.matcher(text);
+        if (matcher.find()) {
+            // matcher.group(1) 将返回第一个捕获组的内容，即数字部分
+            System.out.println("数字部分是: " + matcher.group(1));
+            System.out.println("数字部分是: " + matcher.group(2));
+        } else {
+            System.out.println("字符串不匹配正则表达式");
+        }
+        System.out.println(matcher.find());
+    }
+
+    @Test
+    public void test8() throws IOException {
+        String body = HttpRequestUtils.doGet("https://www.gkzenti.cn/captcha/math");
+        IOUtils.write(body, new FileOutputStream("data/cache/www.gkzenti.cn/math.svg"), StandardCharsets.UTF_8);
+        System.out.println(body);
+    }
+
+
+
+
 
 
 

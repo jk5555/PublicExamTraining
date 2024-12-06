@@ -5,13 +5,16 @@ import com.kun.plugin.publicexamtraining.data.model.Question;
 import com.kun.plugin.publicexamtraining.util.QuestionTypeHelper;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.selector.Html;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -34,6 +37,7 @@ public class OpenQuestionProcessor implements PageProcessor {
             .setCharset("UTF-8")
             .setUseGzip(true)
             .setUserAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_2) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.65 Safari/537.31");
+
     private Integer paperId;
 
     public OpenQuestionProcessor() {
@@ -87,27 +91,20 @@ public class OpenQuestionProcessor implements PageProcessor {
                 continue;
             }
             //替换图片url
-            html.xpath("//img/@src").all().forEach(url -> {
-                String newUrl = "";
-                if (StringUtils.startsWith(url, "//")) {
-                    newUrl = "https:" + url;
-                }
-                html.regex(url).replace(url, newUrl);
-            });
+            html = replaceImg(div, html);
             Question question = new Question();
             question.setPaperId(paperId);
             question.setSource(title);
             question.setQuestionType(questionType);
-            //题目
+            //题号
             String number = html.xpath("//div[@class='row']/div[@class='left']/text()").get();
             question.setNumber(StringUtils.trim(number));
-            String questionStem = html.xpath("//div[@class='row']/div[@class='right']/p/text()").get();
-            question.setQuestionStem(StringUtils.trim(questionStem));
+            //题干
+            List<String> questionTexts = html.xpath("//div[@class='row']/div[@class='right']/p").all();
+            question.setQuestionStem(questionTexts.stream().map(String::trim).collect(Collectors.joining()));
             //选项
-            List<String> options = html.xpath("//div[@class='row']/div[@class='right']/div/text()").all();
-            options = options.stream().map(String::trim).collect(Collectors.toList());
-            question.setAnswerSelect(String.join(Constants.OPTIONS_SEPARATOR, options));
-
+            List<String> options = html.xpath("//div[@class='row']/div[@class='right']/div").all();
+            question.setAnswerSelect(options.stream().map(String::trim).collect(Collectors.joining(Constants.OPTIONS_SEPARATOR)));
             list.add(question);
 
         }
@@ -115,12 +112,57 @@ public class OpenQuestionProcessor implements PageProcessor {
         page.putField(Constants.QUESTION_PARAM, list);
     }
 
+
     private void processAnswer(Page page) {
+        List<Question> list = new ArrayList<>();
+        List<String> allAnswerDiv = page.getHtml().xpath("//div[@id=\"printcontent\"]/div/div/text()").all();
+        //匹配答案，如： 123、A
+        Pattern pattern = Pattern.compile("^(\\d+)[、，.:：]?([A-Za-z])$");
+        for (String div : allAnswerDiv) {
+            Matcher matcher = pattern.matcher(StringUtils.trim(div));
+            if (matcher.find()) {
+                Question question = new Question();
+                question.setNumber(matcher.group(1));
+                question.setAnswer(matcher.group(2));
+                list.add(question);
+            }
+        }
+
+        page.putField(Constants.ANSWER_PARAM, list);
 
     }
 
     private void processExplain(Page page) {
-        page.putField("title", page.getHtml().xpath("/head/title/text()").get());
+        List<Question> list = new ArrayList<>();
+        List<String> allExplainDiv = page.getHtml().xpath("//div[@id=\"printcontent\"]/div/div[@class=\"row\"]").all();
+        for (String div : allExplainDiv) {
+            Html html = new Html(div);
+            //替换图片url
+            html = replaceImg(div, html);
+            Question question = new Question();
+            //题号
+            String number = html.xpath("//div[@class='row']/div[@class='left']/text()").get();
+            question.setNumber(StringUtils.trim(number));
+            List<String> explainTexts = html.xpath("//div[@class='row']/div[@class='right']").all();
+            question.setAnswerAnalysis(explainTexts.stream().map(String::trim).collect(Collectors.joining()));
+            list.add(question);
+        }
+        page.putField(Constants.EXPLAIN_PARAM, list);
+
+    }
+
+
+    private @NotNull Html replaceImg(String div, Html html) {
+        for (String url : new HashSet<>(html.xpath("//img/@src").all())) {
+            String newUrl = "";
+            if (StringUtils.startsWith(url, "//")) {
+                newUrl = "https:" + url;
+                div = StringUtils.replace(div, url, newUrl);
+            }
+
+        }
+
+        return new Html(div);
     }
 
 

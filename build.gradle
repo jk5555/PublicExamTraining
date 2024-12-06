@@ -21,8 +21,8 @@ repositories {
 
 dependencies {
     runtimeOnly 'com.h2database:h2:2.2.224'
-    api 'us.codecraft:webmagic-core:1.0.2'
-//    api 'us.codecraft:webmagic-extension:0.7.3'
+    api 'us.codecraft:webmagic-core:1.0.2' exclude(module: 'fastjson2') exclude(module: 'fastjson2-extension')
+//    api 'us.codecraft:webmagic-extension:1.0.2'
 //    api fileTree(dir: 'src/main/resources/lib', include: ['*.jar'])
 
 

@@ -1,7 +1,8 @@
 package com.kun.plugin.publicexamtraining.data.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 
 public class Paper {
@@ -48,5 +49,9 @@ public class Paper {
         this.source = source;
     }
 
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
+    }
 
 }

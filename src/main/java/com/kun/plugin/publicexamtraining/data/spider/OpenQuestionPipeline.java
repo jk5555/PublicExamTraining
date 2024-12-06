@@ -9,7 +9,11 @@ import us.codecraft.webmagic.ResultItems;
 import us.codecraft.webmagic.Task;
 import us.codecraft.webmagic.pipeline.Pipeline;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class OpenQuestionPipeline implements Pipeline {
     /**
@@ -20,19 +24,25 @@ public class OpenQuestionPipeline implements Pipeline {
      */
     @Override
     public void process(ResultItems resultItems, Task task) {
-        List<Question> list = resultItems.get(Constants.QUESTION_PARAM);
-        if (list == null || list.isEmpty()) {
+        List<Question> questionList = resultItems.get(Constants.QUESTION_PARAM);
+        List<Question> answerList = resultItems.get(Constants.ANSWER_PARAM);
+        List<Question> explainList = resultItems.get(Constants.EXPLAIN_PARAM);
+        if (questionList == null || questionList.isEmpty()) {
             return;
         }
-        List<QuestionEntity> questionEntityList = Lists.transform(list, question -> {
+        Map<String, String> answerMap = Optional.ofNullable(answerList).orElse(new ArrayList<>())
+                .stream().collect(Collectors.toMap(Question::getNumber, QuestionEntity::getAnswer));
+        Map<String, String> explainMap = Optional.ofNullable(explainList).orElse(new ArrayList<>())
+                .stream().collect(Collectors.toMap(Question::getNumber, QuestionEntity::getAnswerAnalysis));
+        List<QuestionEntity> questionEntityList = Lists.transform(questionList, question -> {
             QuestionEntity questionEntity = new QuestionEntity();
             questionEntity.setPaperId(question.getPaperId());
             questionEntity.setSource(question.getSource());
             questionEntity.setQuestionType(question.getQuestionType());
             questionEntity.setQuestionStem(question.getQuestionStem());
             questionEntity.setAnswerSelect(question.getAnswerSelect());
-            questionEntity.setAnswer(question.getAnswer());
-            questionEntity.setAnswerAnalysis(question.getAnswerAnalysis());
+            questionEntity.setAnswer(answerMap.get(question.getNumber()));
+            questionEntity.setAnswerAnalysis(explainMap.get(question.getNumber()));
             return questionEntity;
         });
         H2DbManager.insertQuestionBatch(questionEntityList);
