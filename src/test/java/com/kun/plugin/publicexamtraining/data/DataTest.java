@@ -1,7 +1,5 @@
 package com.kun.plugin.publicexamtraining.data;
 
-import com.kitfox.svg.SVGDiagram;
-import com.kitfox.svg.SVGUniverse;
 import com.kun.plugin.publicexamtraining.data.dao.H2DbManager;
 import com.kun.plugin.publicexamtraining.data.dao.entity.QuestionEntity;
 import com.kun.plugin.publicexamtraining.data.model.Paper;
@@ -19,9 +17,6 @@ import us.codecraft.webmagic.pipeline.FilePipeline;
 import us.codecraft.webmagic.scheduler.QueueScheduler;
 import us.codecraft.webmagic.selector.Html;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -110,17 +105,6 @@ public class DataTest {
         String path = html.xpath("//form[@class='navbar-form']/*/img/@src").get();
         String svg = HttpRequestUtils.doGet("https://www.gkzenti.cn" + StringUtils.trim(path));
         System.out.println(svg);
-        SVGUniverse universe = new SVGUniverse();
-        SVGDiagram diagram = universe.loadSVG(new File("input.svg"));
-
-        // 渲染SVG到BufferedImage
-        SVGImagePanel panel = new SVGImagePanel();
-        panel.setSVGDiagram(diagram);
-        BufferedImage image = new BufferedImage(panel.getWidth(), panel.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        panel.paint(image.getGraphics());
-
-        // 保存BufferedImage为PNG
-        ImageIO.write(image, "png", new File("output.png"));
 
     }
 
