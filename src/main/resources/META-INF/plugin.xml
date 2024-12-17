@@ -8,14 +8,14 @@
     <name>Public Exam Training</name>
 
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
-    <vendor email="kun1.0@qq.com" url="https://www.yourcompany.com">jk5555</vendor>
+    <vendor email="kun1.0@qq.com" url="https://www.github.com/jk5555">jk5555</vendor>
 
     <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
-    Enter short description for your plugin here.<br>
-    <em>most HTML tags may be used</em>
+    <p><b>专为程序员考公准备而打造的插件，可以让你闲时刷行测题</b></p>
+    阿啊阿啊阿啊阿啊阿啊阿啊阿啊阿啊阿啊阿啊阿啊（暂时凑字数，事后删除）
   ]]></description>
 
     <!-- Product and plugin compatibility requirements.
@@ -25,6 +25,23 @@
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
+        <toolWindow id="ToolMainWindow"
+                    anchor="right"
+                    factoryClass="com.kun.plugin.publicexamtraining.ui.WindowFactory"
+                    icon="com.kun.plugin.publicexamtraining.util.Icons.TOOL_WINDOW"
+                    doNotActivateOnStart="true"
+        />
+
+        <notificationGroup id="PublicExamTraining Notification Group" displayType="BALLOON" />
+
 
     </extensions>
+
+
+    <actions>
+        <action id="openWindowAction" class="com.kun.plugin.publicexamtraining.ui.action.OpenWindowAction" text="工具入口"
+                description="打开工具窗口" icon="com.kun.plugin.publicexamtraining.util.Icons.TOOL_WINDOW">
+            <add-to-group group-id="MainToolBar" anchor="last"/>
+        </action>
+    </actions>
 </idea-plugin>

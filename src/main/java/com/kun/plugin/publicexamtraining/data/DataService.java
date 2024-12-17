@@ -1,8 +1,10 @@
 package com.kun.plugin.publicexamtraining.data;
 
-import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
-import com.kun.plugin.publicexamtraining.common.Constants;
+import com.kun.plugin.publicexamtraining.common.DataConstants;
 import com.kun.plugin.publicexamtraining.data.dao.H2DbManager;
 import com.kun.plugin.publicexamtraining.data.dao.entity.PaperEntity;
 import com.kun.plugin.publicexamtraining.data.model.Paper;
@@ -12,7 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,7 +22,7 @@ public class DataService {
     // 公开题库网接口地址
     public static final String API_URL = "https://www.gkzenti.cn/api/json?cls=行测&province=%s";
 
-    public static final Pattern pattern = Pattern.compile(Constants.OPEN_QUESTION_PAPER_PATTERN);
+    public static final Pattern pattern = Pattern.compile(DataConstants.OPEN_QUESTION_PAPER_PATTERN);
 
     public static final List<String> ALL_PROVINCE = Arrays.asList("北京", "天津", "上海", "重庆", "河北", "山西", "辽宁", "吉林", "黑龙江", "江苏", "浙江", "安徽", "福建", "江西", "山东", "河南", "湖北", "湖南", "广东", "海南", "四川", "贵州", "云南", "陕西", "甘肃", "青海", "内蒙古", "广西", "西藏", "宁夏", "新疆");
 
@@ -32,7 +33,12 @@ public class DataService {
         }
         String response = HttpRequestUtils.doGet(String.format(API_URL, province));
         if (StringUtils.isNotBlank(response)) {
-            return JSON.parseArray(response, Paper.class);
+            try {
+                return new ObjectMapper().readValue(response, new TypeReference<>() {
+                });
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException("getPapers response json parse fail, response:" + response, e);
+            }
         }
         return Collections.emptyList();
     }

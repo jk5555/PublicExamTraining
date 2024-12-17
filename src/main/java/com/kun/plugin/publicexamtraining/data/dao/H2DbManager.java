@@ -1,6 +1,6 @@
 package com.kun.plugin.publicexamtraining.data.dao;
 
-import com.kun.plugin.publicexamtraining.common.Constants;
+import com.kun.plugin.publicexamtraining.common.DataConstants;
 import com.kun.plugin.publicexamtraining.data.dao.entity.PaperEntity;
 import com.kun.plugin.publicexamtraining.data.dao.entity.QuestionEntity;
 import com.kun.plugin.publicexamtraining.util.CommonUtils;
@@ -12,7 +12,7 @@ import java.util.List;
 public class H2DbManager {
 
 
-    private static final String DB_URL = String.format("jdbc:h2:file:%s/db/publicexam;MODE=MySQL;DB_CLOSE_ON_EXIT=TRUE;AUTO_SERVER=TRUE;CACHE_SIZE=2048;", Constants.CACHE_HOME);
+    private static final String DB_URL = String.format("jdbc:h2:file:%s/db/publicexam;MODE=MySQL;DB_CLOSE_ON_EXIT=TRUE;AUTO_SERVER=TRUE;CACHE_SIZE=2048;", DataConstants.CACHE_HOME);
 
     private static final String DB_USER = "sa";
     private static final String DB_PASSWORD = "sa";

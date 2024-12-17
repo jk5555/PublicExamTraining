@@ -1,6 +1,6 @@
 package com.kun.plugin.publicexamtraining.data.spider;
 
-import com.kun.plugin.publicexamtraining.common.Constants;
+import com.kun.plugin.publicexamtraining.common.DataConstants;
 import com.kun.plugin.publicexamtraining.data.model.Question;
 import com.kun.plugin.publicexamtraining.util.QuestionTypeHelper;
 import org.apache.commons.lang3.RandomUtils;
@@ -23,10 +23,10 @@ import java.util.stream.Collectors;
  */
 public class OpenQuestionProcessor implements PageProcessor {
 
-    private static final Pattern PATTERN = Pattern.compile(Constants.OPEN_SITE_URL_POST);
-    private static final Pattern QUESTION = Pattern.compile(Constants.OPEN_QUESTION_PAPER_PATTERN);
-    private static final Pattern ANSWER = Pattern.compile(Constants.OPEN_ANSWER_PAPER_PATTERN);
-    private static final Pattern EXPLAIN = Pattern.compile(Constants.OPEN_EXPLAIN_PAPER_PATTERN);
+    private static final Pattern PATTERN = Pattern.compile(DataConstants.OPEN_SITE_URL_POST);
+    private static final Pattern QUESTION = Pattern.compile(DataConstants.OPEN_QUESTION_PAPER_PATTERN);
+    private static final Pattern ANSWER = Pattern.compile(DataConstants.OPEN_ANSWER_PAPER_PATTERN);
+    private static final Pattern EXPLAIN = Pattern.compile(DataConstants.OPEN_EXPLAIN_PAPER_PATTERN);
     private final Site site = Site
             .me()
             .setDomain("www.gkzenti.cn")
@@ -104,12 +104,12 @@ public class OpenQuestionProcessor implements PageProcessor {
             question.setQuestionStem(questionTexts.stream().map(String::trim).collect(Collectors.joining()));
             //选项
             List<String> options = html.xpath("//div[@class='row']/div[@class='right']/div").all();
-            question.setAnswerSelect(options.stream().map(String::trim).collect(Collectors.joining(Constants.OPTIONS_SEPARATOR)));
+            question.setAnswerSelect(options.stream().map(String::trim).collect(Collectors.joining(DataConstants.OPTIONS_SEPARATOR)));
             list.add(question);
 
         }
 
-        page.putField(Constants.QUESTION_PARAM, list);
+        page.putField(DataConstants.QUESTION_PARAM, list);
     }
 
 
@@ -128,7 +128,7 @@ public class OpenQuestionProcessor implements PageProcessor {
             }
         }
 
-        page.putField(Constants.ANSWER_PARAM, list);
+        page.putField(DataConstants.ANSWER_PARAM, list);
 
     }
 
@@ -147,7 +147,7 @@ public class OpenQuestionProcessor implements PageProcessor {
             question.setAnswerAnalysis(explainTexts.stream().map(String::trim).collect(Collectors.joining()));
             list.add(question);
         }
-        page.putField(Constants.EXPLAIN_PARAM, list);
+        page.putField(DataConstants.EXPLAIN_PARAM, list);
 
     }
 
