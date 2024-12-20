@@ -25,7 +25,7 @@
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow id="ToolMainWindow"
+        <toolWindow id="Public Exam Training"
                     anchor="right"
                     factoryClass="com.kun.plugin.publicexamtraining.ui.WindowFactory"
                     icon="com.kun.plugin.publicexamtraining.util.Icons.TOOL_WINDOW"
