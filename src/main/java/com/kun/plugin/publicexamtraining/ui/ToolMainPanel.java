@@ -26,11 +26,8 @@ public class ToolMainPanel extends SimpleToolWindowPanel implements Disposable {
         tabs = new JBTabsImpl(project);
 
         // 创建第一个标签页
-        RandomTrainHtmlPanel randomTrainHtmlPanel = new RandomTrainHtmlPanel("<html><b>这是粗体文本</b><br><i>这是斜体文本</i></html>");
-        JBPanel tab1Content = new JBPanel(new BorderLayout());
-        tab1Content.add(randomTrainHtmlPanel, BorderLayout.CENTER);
-        TabInfo tab1 = new TabInfo(tab1Content);
-        tab1.setText("专项训练");
+        TabInfo tab1 = new TabInfo(new SystemTrainingPanel().buildComponent());
+        tab1.setText("系统训练");
         tabs.addTab(tab1);
 
         // 创建第二个标签页
