@@ -27,7 +27,7 @@
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow id="Public Exam Training"
                     anchor="right"
-                    factoryClass="com.kun.plugin.publicexamtraining.ui.WindowFactory"
+                    factoryClass="com.kun.plugin.publicexamtraining.ui.MyToolWindowFactory"
                     icon="com.kun.plugin.publicexamtraining.util.Icons.TOOL_WINDOW"
                     doNotActivateOnStart="true"
         />

@@ -1,5 +1,6 @@
 package com.kun.plugin.publicexamtraining.ui;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.ui.jcef.JBCefBrowserBase;
 import com.intellij.ui.jcef.JBCefJSQuery;
 import com.intellij.ui.jcef.JCEFHtmlPanel;
@@ -11,44 +12,50 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.function.Function;
 
-public class BaseHtmlPanel {
+public abstract class BaseHtmlPanel {
+
+    private final Project project;
 
     private String htmlTemplate;
 
     //html面板支持渲染复杂html
-    private JCEFHtmlPanel jcefHtmlPanel;
+    private final JCEFHtmlPanel jcefHtmlPanel;
 
     //JavaScript事件处理
-    private JBCefJSQuery jsQuery;
+    private final JBCefJSQuery jsQuery;
 
 
-    public BaseHtmlPanel(String htmlTemplatePath) {
+    public BaseHtmlPanel(Project project, String htmlTemplatePath) {
         // 读取本地HTML文件内容
         JCEFHtmlPanel jcefHtmlPanel = new JCEFHtmlPanel("");
+        JBCefJSQuery jbCefJSQuery = JBCefJSQuery.create((JBCefBrowserBase) jcefHtmlPanel);
+        String htmlContent;
         try {
-            String htmlContent = IOUtils.toString(Objects.requireNonNull(BaseHtmlPanel.class.getResourceAsStream(htmlTemplatePath)), StandardCharsets.UTF_8);
-            JBCefJSQuery jbCefJSQuery = JBCefJSQuery.create((JBCefBrowserBase) jcefHtmlPanel);
-            this.htmlTemplate = htmlContent;
-            this.jcefHtmlPanel = jcefHtmlPanel;
-            this.jsQuery = jbCefJSQuery;
+            htmlContent = IOUtils.toString(Objects.requireNonNull(BaseHtmlPanel.class.getResourceAsStream(htmlTemplatePath)), StandardCharsets.UTF_8);
         } catch (IOException e) {
-            String errorHtml = "<html><body><h1>Error loading Page</h1></body></html>";
-            jcefHtmlPanel.loadHTML(errorHtml);
+            htmlContent = "<html><body><h1>Error loading Page</h1></body></html>";
         }
+        this.htmlTemplate = htmlContent;
+        this.jcefHtmlPanel = jcefHtmlPanel;
+        this.jsQuery = jbCefJSQuery;
+        this.project = project;
+        jcefHtmlPanel.loadHTML(htmlContent);
 
     }
 
-    public JComponent buildComponent() {
-        jcefHtmlPanel.loadHTML(htmlTemplate);
-        return jcefHtmlPanel.getComponent();
-    }
+    public abstract JComponent buildComponent();
 
     public void updateHtml(String html) {
         this.htmlTemplate = html;
+        jcefHtmlPanel.loadHTML(html);
     }
 
     public String getHtml() {
         return htmlTemplate;
+    }
+
+    public Project getProject() {
+        return project;
     }
 
     public void addEvent(Function<? super String, ? extends JBCefJSQuery.Response> handler) {
@@ -59,7 +66,9 @@ public class BaseHtmlPanel {
         jcefHtmlPanel.getCefBrowser().executeJavaScript(script, "", 0);
     }
 
-
+    protected JComponent getComponent() {
+        return jcefHtmlPanel.getComponent();
+    }
 
 
 }
