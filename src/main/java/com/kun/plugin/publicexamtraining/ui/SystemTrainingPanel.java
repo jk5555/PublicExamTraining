@@ -1,39 +1,45 @@
 package com.kun.plugin.publicexamtraining.ui;
 
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
-import com.intellij.ui.jcef.JBCefJSQuery;
-import com.kun.plugin.publicexamtraining.util.NotificationUtils;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.ui.jcef.JCEFHtmlPanel;
+import com.kun.plugin.publicexamtraining.ui.jcef.JcefFactory;
+import com.kun.plugin.publicexamtraining.util.ResourceUtils;
 
 import javax.swing.*;
 
-public class SystemTrainingPanel extends BaseHtmlPanel{
+public class SystemTrainingPanel implements Disposable {
 
-    public static final String htmlTemplatePath = "/template/test.html";
+    private static final String TAG = "SystemTraining";
+    private final JCEFHtmlPanel jcefHtmlPanel;
+    private final Project project;
+    private final ToolWindow toolWindow;
 
-    public SystemTrainingPanel(Project project) {
-        super(project, htmlTemplatePath);
+
+    public SystemTrainingPanel(ToolWindow toolWindow, Project project) {
+        jcefHtmlPanel = JcefFactory.getBrowser(project, TAG);
+        this.project = project;
+        this.toolWindow = toolWindow;
+        init();
     }
 
+    private void init() {
+        jcefHtmlPanel.setHtml(ResourceUtils.loadHtml("/template/test.html"));
+    }
 
+    public JComponent getComponent() {
+        return jcefHtmlPanel.getComponent();
+    }
+
+    /**
+     * Usually not invoked directly, see class javadoc.
+     */
     @Override
-    public JComponent buildComponent() {
-        addEvent(request -> {
-            NotificationUtils.notify(getProject(), "点击事件成功执行");
-            return new JBCefJSQuery.Response("点击事件成功执行");
-        });
-        executeJavaScript("window.cefQuery = function(query) {" +
-                "    return new Promise(function(resolve, reject) {" +
-                "        window.cefQueryImpl({" +
-                "            request: query.request," +
-                "            onSuccess: function(response) { resolve(response); }," +
-                "            onFailure: function(error_code, error_message) { reject(error_message); }" +
-                "        });" +
-                "    });" +
-                "};");
-        return getComponent();
+    public void dispose() {
+        Disposer.dispose(this);
     }
-
-
 
 
 }

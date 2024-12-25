@@ -6,6 +6,7 @@ import com.kun.plugin.publicexamtraining.data.model.Paper;
 import com.kun.plugin.publicexamtraining.data.spider.OpenQuestionPipeline;
 import com.kun.plugin.publicexamtraining.data.spider.OpenQuestionProcessor;
 import com.kun.plugin.publicexamtraining.util.HttpRequestUtils;
+import com.kun.plugin.publicexamtraining.util.PackageUtils;
 import com.kun.plugin.publicexamtraining.util.QuestionTypeHelper;
 import com.kun.plugin.publicexamtraining.util.TextMatcher;
 import org.apache.commons.io.IOUtils;
@@ -149,6 +150,13 @@ public class DataTest {
     }
 
 
+    @Test
+    public void test9() {
+        Set<Class<?>> classes = PackageUtils.scanClasses("com.kun.plugin.publicexamtraining.ui.jcef");
+        for (Class<?> clazz : classes) {
+            System.out.println(clazz.getName());
+        }
+    }
 
 
 

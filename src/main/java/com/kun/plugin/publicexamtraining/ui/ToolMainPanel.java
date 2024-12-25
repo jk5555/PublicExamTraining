@@ -26,7 +26,7 @@ public class ToolMainPanel extends SimpleToolWindowPanel implements Disposable {
         tabs = new JBTabsImpl(project);
 
         // 创建第一个标签页
-        TabInfo tab1 = new TabInfo(new SystemTrainingPanel(project).buildComponent());
+        TabInfo tab1 = new TabInfo(new SystemTrainingPanel(toolWindow, project).getComponent());
         tab1.setText("系统训练");
         tabs.addTab(tab1);
 
