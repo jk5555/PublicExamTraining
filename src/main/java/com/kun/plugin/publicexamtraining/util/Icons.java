@@ -8,7 +8,7 @@ import javax.swing.*;
 
 public interface Icons {
 
-    Icon TOOL_WINDOW = IconLoader.getIcon("/icons/LeetCode.svg", Icons.class.getClassLoader());
+    Icon TOOL_WINDOW = IconLoader.getIcon("/icons/logo.svg", Icons.class.getClassLoader());
     Icon EMPEROR_NEW_CLOTHES = IconLoader.getIcon("/icons/emperor_new_clothes.svg", Icons.class.getClassLoader());
 
     Icon CLEAN = IconLoader.getIcon("/icons/clean.svg", Icons.class.getClassLoader());
