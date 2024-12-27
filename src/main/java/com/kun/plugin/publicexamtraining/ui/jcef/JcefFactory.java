@@ -1,5 +1,6 @@
 package com.kun.plugin.publicexamtraining.ui.jcef;
 
+import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.ui.jcef.JBCefApp;
@@ -77,6 +78,17 @@ public class JcefFactory {
         JCEFHtmlPanel htmlPanel = new JCEFHtmlPanel(client, "");
         cache.put(key, htmlPanel);
         return htmlPanel;
+    }
+
+    /**
+     * 获取ide夜间/白天主题样式
+     *
+     * @return dark/light
+     */
+    public static String getGlobalStyle() {
+        if (EditorColorsManager.getInstance().isDarkEditor())
+            return "dark";
+        return "light";
     }
 
 
