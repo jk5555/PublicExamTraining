@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1" name="viewport">
     <meta content="light dark" name="color-scheme">
-    <link href="/css/pico.min.css" rel="stylesheet">
+    <link href="../css/pico.min.css" rel="stylesheet">
     <title>Hello world!</title>
 <!--    <style>-->
 <!--        :root {-->
@@ -67,14 +67,16 @@
         </tfoot>
     </table>
 </main>
-<script>
+<script type="text/javascript">
     window.onload = function () {
-        // function f() {
-        //     alert('f');
-        // }
-        // f();
+        alert(123)
+        function f() {
+            alert('f');
+        }
+        f();
         // // //参数可以带过来
-        // // alert(window.location.href);
+        alert(window.location.href);
+        window.location.href= 'https://www.baidu.com';
         // window.queryGlobalStyle({
         //     request: 'request', onSuccess: function (response) {
         //         alert(response);

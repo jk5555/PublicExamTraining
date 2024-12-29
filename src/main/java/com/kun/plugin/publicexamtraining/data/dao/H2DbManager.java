@@ -4,6 +4,7 @@ import com.kun.plugin.publicexamtraining.common.DataConstants;
 import com.kun.plugin.publicexamtraining.data.dao.entity.PaperEntity;
 import com.kun.plugin.publicexamtraining.data.dao.entity.QuestionEntity;
 import com.kun.plugin.publicexamtraining.util.CommonUtils;
+import com.kun.plugin.publicexamtraining.util.ResourceUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.sql.*;
@@ -18,30 +19,12 @@ public class H2DbManager {
     private static final String DB_PASSWORD = "sa";
     private static final String DB_DRIVER = "org.h2.Driver";
     private static final String DB_NAME = "publicexam";
-    private static final String DB_TABLE_SQL = "CREATE TABLE IF NOT EXISTS paper\n" +
-            "(\n" +
-            "    id          INT PRIMARY KEY AUTO_INCREMENT,\n" +
-            "    source_id   varchar(64) comment '来源唯一标识，指的是题源的主键',\n" +
-            "    source_url  varchar(256) comment '题源的url',\n" +
-            "    title       varchar(256) comment '试卷标题',\n" +
-            "    source      varchar(256) comment '试卷来源',\n" +
-            "    province    varchar(64) comment '省份',\n" +
-            "    create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n" +
-            "    update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP\n" +
-            ");\n" +
-            "CREATE TABLE IF NOT EXISTS question\n" +
-            "(\n" +
-            "    id              INT PRIMARY KEY AUTO_INCREMENT,\n" +
-            "    paper_id        INT comment '试卷ID',\n" +
-            "    source          varchar(64) comment '题源（试卷标题）',\n" +
-            "    question_type   varchar(64) comment '问题类型',\n" +
-            "    question_stem   text comment '问题题干',\n" +
-            "    answer_select   text comment '答案选项，选项之间用|*|分隔',\n" +
-            "    answer          varchar(64) comment '正确答案',\n" +
-            "    answer_analysis text comment '答案解析',\n" +
-            "    create_time     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n" +
-            "    update_time     TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP\n" +
-            ");\n";
+    private static final String DB_TABLE_SQL = ResourceUtils.getResourceAsString("/db/table.sql");
+
+
+    static {
+        init();
+    }
 
     public static void init() {
         Connection connection = null;
@@ -85,9 +68,6 @@ public class H2DbManager {
         }
     }
 
-    static {
-        init();
-    }
 
 
     public static int insertQuestionBatch(List<QuestionEntity> questionEntityList) {
@@ -185,4 +165,22 @@ public class H2DbManager {
     }
 
 
+    public static int selectInitFlag() {
+        Connection connection = null;
+        Statement statement = null;
+        try {
+            Class.forName(DB_DRIVER);
+            connection = DriverManager.getConnection(DB_URL);
+            statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("select init_status from init_flag where id = 1;");
+            if (resultSet.next()) {
+                return resultSet.getInt("init_status");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            close(statement, connection);
+        }
+        return 0;
+    }
 }

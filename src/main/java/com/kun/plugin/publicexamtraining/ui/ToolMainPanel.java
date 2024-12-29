@@ -11,6 +11,7 @@ import com.intellij.ui.components.JBPanel;
 import com.intellij.ui.tabs.JBTabs;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.impl.JBTabsImpl;
+import com.kun.plugin.publicexamtraining.data.DataService;
 
 import java.awt.*;
 
@@ -26,19 +27,40 @@ public class ToolMainPanel extends SimpleToolWindowPanel implements Disposable {
         tabs = new JBTabsImpl(project);
 
         // 创建第一个标签页
-        TabInfo tab1 = new TabInfo(new SystemTrainingPanel(toolWindow, project).getComponent());
-        tab1.setText("系统训练");
-        tabs.addTab(tab1);
-
+        TabInfo systemTab = new TabInfo(new SystemTrainingPanel(toolWindow, project).getComponent());
+        systemTab.setText("系统训练");
         // 创建第二个标签页
         JBPanel tab2Content = new JBPanel(new BorderLayout());
         tab2Content.add(new JBLabel("这是第二个标签页的内容"), BorderLayout.CENTER);
-        TabInfo tab2 = new TabInfo(tab2Content);
-        tab2.setText("标签2");
-        tabs.addTab(tab2);
+        TabInfo randomTab = new TabInfo(tab2Content);
+        randomTab.setText("标签2");
+
+        TabInfo initPanelTab = new TabInfo(new InitPanel(toolWindow, project).getComponent());
+        initPanelTab.setText("初始化");
+
+
+        tabs.addTab(systemTab);
+        tabs.addTab(randomTab);
+        tabs.addTab(initPanelTab);
+
+        processInitTabHidden();
 
         // 将tabs添加到主面板
         setContent(tabs.getComponent());
+    }
+
+    private void processInitTabHidden() {
+        if (DataService.isInitFlag()) {
+            tabs.getTabAt(0).setHidden(false);
+            tabs.getTabAt(1).setHidden(false);
+            tabs.getTabAt(2).setHidden(true);
+            selectTab(0);
+        } else {
+            tabs.getTabAt(0).setHidden(true);
+            tabs.getTabAt(1).setHidden(true);
+            tabs.getTabAt(2).setHidden(false);
+            selectTab(2);
+        }
     }
 
     // 获取当前选中的标签页

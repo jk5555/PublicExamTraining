@@ -64,6 +64,10 @@ public class DataService {
 
     }
 
+    public static boolean isInitFlag() {
+         return H2DbManager.selectInitFlag() == 1;
+    }
+
 
 
 
