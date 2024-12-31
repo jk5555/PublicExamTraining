@@ -51,19 +51,11 @@ public class ToolMainPanel extends SimpleToolWindowPanel implements Disposable {
     }
 
     private void showLoadingDialog() {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                loadingDialog.setVisible(true);
-            }
-        });
+        SwingUtilities.invokeLater(() -> loadingDialog.setVisible(true));
     }
 
     private void hideLoadingDialog() {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                loadingDialog.setVisible(false);
-            }
-        });
+        SwingUtilities.invokeLater(() -> loadingDialog.setVisible(false));
     }
 
     private void initTabs() {
