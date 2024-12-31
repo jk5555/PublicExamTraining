@@ -13,6 +13,7 @@ import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.impl.JBTabsImpl;
 import com.kun.plugin.publicexamtraining.data.DataService;
 
+import javax.swing.*;
 import java.awt.*;
 
 public class ToolMainPanel extends SimpleToolWindowPanel implements Disposable {
@@ -20,6 +21,7 @@ public class ToolMainPanel extends SimpleToolWindowPanel implements Disposable {
     private final JBTabs tabs;
     private final ToolWindow toolWindow;
     private final Project project;
+    private JDialog loadingDialog;
 
     public ToolMainPanel(ToolWindow toolWindow, Project project) {
         super(Boolean.TRUE, Boolean.TRUE);
@@ -35,6 +37,33 @@ public class ToolMainPanel extends SimpleToolWindowPanel implements Disposable {
 
         // 将tabs添加到主面板
         setContent(tabs.getComponent());
+        // 初始化加载动画
+        initLoadingDialog();
+    }
+
+
+    private void initLoadingDialog() {
+        loadingDialog = new JDialog();
+        loadingDialog.setUndecorated(true);
+        loadingDialog.setSize(200, 100);
+        loadingDialog.setLocationRelativeTo(this);
+        loadingDialog.add(new JLabel("加载中...", SwingConstants.CENTER));
+    }
+
+    private void showLoadingDialog() {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                loadingDialog.setVisible(true);
+            }
+        });
+    }
+
+    private void hideLoadingDialog() {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                loadingDialog.setVisible(false);
+            }
+        });
     }
 
     private void initTabs() {
@@ -87,7 +116,13 @@ public class ToolMainPanel extends SimpleToolWindowPanel implements Disposable {
 
     // 刷新面板
     public void refresh() {
-        initTabs();
+        showLoadingDialog();
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                initTabs();
+                hideLoadingDialog();
+            }
+        });
     }
 
     /**
