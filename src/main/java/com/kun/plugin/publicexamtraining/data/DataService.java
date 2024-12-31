@@ -9,7 +9,9 @@ import com.kun.plugin.publicexamtraining.data.dao.H2DbManager;
 import com.kun.plugin.publicexamtraining.data.dao.entity.PaperEntity;
 import com.kun.plugin.publicexamtraining.data.model.Paper;
 import com.kun.plugin.publicexamtraining.util.HttpRequestUtils;
+import com.kun.plugin.publicexamtraining.util.LogUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.StopWatch;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -69,7 +71,19 @@ public class DataService {
     }
 
 
+    public static void initPaper() {
+        DataService.ALL_PROVINCE.forEach(province -> {
+            StopWatch stopWatch = new StopWatch(province);
+            stopWatch.start();
+            List<Paper> papers = DataService.getPapers(province);
+            stopWatch.split();
+            int saved = DataService.savePapers(papers, province);
+            stopWatch.stop();
+            LogUtils.LOG.info(String.format("province:%s, get:%s, save:%s, time:%s", province, papers.size(), saved, stopWatch));
+        });
+    }
 
-
-
+    public static void setInitSuccess() {
+        H2DbManager.updateInitFlag();
+    }
 }

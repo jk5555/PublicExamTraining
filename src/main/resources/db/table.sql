@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS paper
                 source      varchar(256) comment '试卷来源',
                 province    varchar(64) comment '省份',
                 create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                UNIQUE (source_url)
             );
 
 CREATE TABLE IF NOT EXISTS question
@@ -32,4 +33,4 @@ CREATE TABLE IF NOT EXISTS init_flag
     update_time     TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     );
 
-insert into init_flag(init_status) values (0);
+MERGE INTO init_flag AS t USING (SELECT 1 AS id) AS s ON t.id = s.id WHEN NOT MATCHED THEN INSERT (id, init_status) VALUES (1,0);

@@ -39,6 +39,7 @@ public class SystemTrainingPanel implements Disposable {
     @Override
     public void dispose() {
         Disposer.dispose(this);
+        Disposer.dispose(jcefHtmlPanel);
     }
 
 

@@ -7,12 +7,15 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.jcef.JCEFHtmlPanel;
 import com.kun.plugin.publicexamtraining.ui.jcef.JcefFactory;
 import com.kun.plugin.publicexamtraining.util.ResourceUtils;
+import org.cef.browser.CefBrowser;
+import org.cef.browser.CefFrame;
+import org.cef.handler.CefLoadHandlerAdapter;
 
 import javax.swing.*;
 
 public class InitPanel implements Disposable {
 
-    private static final String TAG = "Init";
+    private static final String TAG = "InitTab";
     private final JCEFHtmlPanel jcefHtmlPanel;
     private final Project project;
     private final ToolWindow toolWindow;
@@ -26,8 +29,22 @@ public class InitPanel implements Disposable {
     }
 
     private void init() {
-        jcefHtmlPanel.setHtml(ResourceUtils.loadHtml("/template/init_panel.html"));
+        final String projectName = project.getName();
+        jcefHtmlPanel.setHtml(ResourceUtils.loadHtml("/template/initPanel.html"));
+        jcefHtmlPanel.getJBCefClient().addLoadHandler(new CefLoadHandlerAdapter() {
+            @Override
+            public void onLoadEnd(CefBrowser browser, CefFrame frame, int httpStatusCode) {
+                if (frame.isMain()) {
+                    browser.executeJavaScript("let newDiv = document.createElement(\"div\");\n" +
+                            "    newDiv.id = \"projectId\";\n" +
+                            "    newDiv.style.display = \"none\";\n" +
+                            "    newDiv.innerText = \""+projectName+"\";\n" +
+                            "    document.body.appendChild(newDiv);", frame.getURL(), 0);
+                }
+            }
+        }, jcefHtmlPanel.getCefBrowser());
     }
+
 
     public JComponent getComponent() {
         return jcefHtmlPanel.getComponent();
@@ -39,6 +56,7 @@ public class InitPanel implements Disposable {
     @Override
     public void dispose() {
         Disposer.dispose(this);
+        Disposer.dispose(jcefHtmlPanel);
     }
 
 

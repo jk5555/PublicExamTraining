@@ -4,6 +4,7 @@ import com.kun.plugin.publicexamtraining.common.DataConstants;
 import com.kun.plugin.publicexamtraining.data.dao.entity.PaperEntity;
 import com.kun.plugin.publicexamtraining.data.dao.entity.QuestionEntity;
 import com.kun.plugin.publicexamtraining.util.CommonUtils;
+import com.kun.plugin.publicexamtraining.util.LogUtils;
 import com.kun.plugin.publicexamtraining.util.ResourceUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -41,7 +42,7 @@ public class H2DbManager {
             }
             statement.executeBatch();
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtils.LOG.error(e);
         } finally {
             close(statement, connection);
         }
@@ -57,17 +58,16 @@ public class H2DbManager {
                 statement.close();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LogUtils.LOG.error(e);
         }
         try {
             if (connection != null) {
                 connection.close();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LogUtils.LOG.error(e);
         }
     }
-
 
 
     public static int insertQuestionBatch(List<QuestionEntity> questionEntityList) {
@@ -104,7 +104,7 @@ public class H2DbManager {
             int[] res1 = statement.executeBatch();
             successCount += sumSuccessResult(res1);
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtils.LOG.error(e);
         } finally {
             close(statement, connection);
         }
@@ -136,7 +136,7 @@ public class H2DbManager {
         try {
             Class.forName(DB_DRIVER);
             connection = DriverManager.getConnection(DB_URL);
-            statement = connection.prepareStatement("insert into PAPER (SOURCE_ID, SOURCE_URL, TITLE, SOURCE, PROVINCE) values (?,?,?,?,?)");
+            statement = connection.prepareStatement("INSERT INTO PAPER (SOURCE_ID, SOURCE_URL, TITLE, SOURCE, PROVINCE) values (?,?,?,?,?) ON DUPLICATE KEY UPDATE SOURCE_ID = SOURCE_ID;");
             int count = 0;
             for (PaperEntity paper : paperList) {
                 count++;
@@ -156,7 +156,8 @@ public class H2DbManager {
             int[] res1 = statement.executeBatch();
             successCount += sumSuccessResult(res1);
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtils.LOG.error(e);
+            throw new RuntimeException(e);
         } finally {
             close(statement, connection);
         }
@@ -177,10 +178,25 @@ public class H2DbManager {
                 return resultSet.getInt("init_status");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtils.LOG.error(e);
         } finally {
             close(statement, connection);
         }
         return 0;
+    }
+
+    public static void updateInitFlag() {
+        Connection connection = null;
+        Statement statement = null;
+        try {
+            Class.forName(DB_DRIVER);
+            connection = DriverManager.getConnection(DB_URL);
+            statement = connection.createStatement();
+            statement.executeUpdate("update init_flag set init_status = 1 where id = 1;");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            close(statement, connection);
+        }
     }
 }

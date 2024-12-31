@@ -18,35 +18,45 @@ import java.awt.*;
 public class ToolMainPanel extends SimpleToolWindowPanel implements Disposable {
 
     private final JBTabs tabs;
+    private final ToolWindow toolWindow;
+    private final Project project;
 
     public ToolMainPanel(ToolWindow toolWindow, Project project) {
         super(Boolean.TRUE, Boolean.TRUE);
+        this.toolWindow = toolWindow;
+        this.project = project;
         setLayout(new BorderLayout());
 
         // 创建JBTabs实例
         tabs = new JBTabsImpl(project);
+
+        // 初始化标签页
+        initTabs();
+
+        // 将tabs添加到主面板
+        setContent(tabs.getComponent());
+    }
+
+    private void initTabs() {
+        tabs.removeAllTabs();
 
         // 创建第一个标签页
         TabInfo systemTab = new TabInfo(new SystemTrainingPanel(toolWindow, project).getComponent());
         systemTab.setText("系统训练");
         // 创建第二个标签页
         JBPanel tab2Content = new JBPanel(new BorderLayout());
-        tab2Content.add(new JBLabel("这是第二个标签页的内容"), BorderLayout.CENTER);
+        tab2Content.add(new JBLabel("这是第二个标签页的内容:"+project.getName()), BorderLayout.CENTER);
         TabInfo randomTab = new TabInfo(tab2Content);
         randomTab.setText("标签2");
 
         TabInfo initPanelTab = new TabInfo(new InitPanel(toolWindow, project).getComponent());
         initPanelTab.setText("初始化");
 
-
         tabs.addTab(systemTab);
         tabs.addTab(randomTab);
         tabs.addTab(initPanelTab);
 
         processInitTabHidden();
-
-        // 将tabs添加到主面板
-        setContent(tabs.getComponent());
     }
 
     private void processInitTabHidden() {
@@ -73,6 +83,11 @@ public class ToolMainPanel extends SimpleToolWindowPanel implements Disposable {
         if (index >= 0 && index < tabs.getTabCount()) {
             tabs.select(tabs.getTabAt(index), true);
         }
+    }
+
+    // 刷新面板
+    public void refresh() {
+        initTabs();
     }
 
     /**
