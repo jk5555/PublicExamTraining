@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html data-theme="dark" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <meta content="light dark" name="color-scheme"/>
+    <link href="../css/pico.min.css" rel="stylesheet" type="text/css">
+    <link href="http://inner/css/pico.min.css" rel="stylesheet" type="text/css">
+    <script src="http://inner/js/theme.js"></script>
+    <title>exam page</title>
+</head>
+<body>
+<main class="container" id="examContainer">
+    <section>
+    <span aria-busy="true">题目正在加载中...</span>
+    </section>
+</main>
+<footer>
+
+</footer>
+<script>
+    function reFreshContent(currentNum = 0) {
+        //重新渲染题目todo
+
+    }
+
+    function loadQuestions(paperId) {
+        window.loadQuestionList({
+            request: paperId, onSuccess: function (response) {
+                questions = JSON.parse(response);
+                reFreshContent();
+            }, onFailure: function (error_code, error_message) {
+                let examContainer = document.getElementById('examContainer');
+                examContainer.innerHTML = '<span aria-busy="false">题目加载失败!</span>';
+            }
+        });
+    }
+
+
+    function getQueryParams() {
+        let params = {};
+        let queryString = window.location.search.substring(1);
+        let regex = /([^&=]+)=([^&]*)/g;
+        let m;
+        while (m = regex.exec(queryString)) {
+            params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+        }
+        return params;
+    }
+
+    function extractYearAndProvince(text) {
+        // 定义正则表达式，匹配年份（4位数字）和省份
+        let yearRegex = /(20\d{2}|1999)/;
+        let provinceRegex = /(北京|天津|上海|重庆|河北|山西|辽宁|吉林|黑龙江|江苏|浙江|安徽|福建|江西|山东|河南|湖北|湖南|广东|海南|四川|贵州|云南|陕西|甘肃|青海|内蒙古|广西|西藏|宁夏|新疆|香港|澳门|台湾)/;
+        const match1 = text?.match(yearRegex);
+        const match2 = text?.match(provinceRegex);
+        let result = {};
+        result.year = match1 ? match1[1] : '未知';
+        result.province = match2 ? match2[1] : '未知';
+        return '('+result.year+', '+result.province+')';
+    }
+
+    //提取跳转路径的参数
+    let queryParams = getQueryParams() || {};
+    const paperId = queryParams['paperId'];
+    const title = queryParams['title'];
+    // 提取年份和省份
+    const examYear = extractYearAndProvince(title);
+    let questions = [];
+
+    loadQuestions(paperId);
+
+
+</script>
+</body>
+</html>

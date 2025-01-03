@@ -9,6 +9,7 @@ import com.kun.plugin.publicexamtraining.util.ResourceUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class H2DbManager {
@@ -198,5 +199,96 @@ public class H2DbManager {
         } finally {
             close(statement, connection);
         }
+    }
+
+    public static List<PaperEntity> queryPapers(String province) {
+        List<PaperEntity> paperEntityList = new ArrayList<>();
+        Connection connection = null;
+        PreparedStatement statement = null;
+        try {
+            Class.forName(DB_DRIVER);
+            connection = DriverManager.getConnection(DB_URL);
+            statement = connection.prepareStatement("select ID,SOURCE_ID,SOURCE_URL, TITLE,SOURCE,PROVINCE,CREATE_TIME,UPDATE_TIME from PAPER where PROVINCE= ? order by ID;");
+            statement.setString(1, province);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                PaperEntity paperEntity = setPaper(resultSet);
+                paperEntityList.add(paperEntity);
+            }
+
+        } catch (Exception e) {
+            LogUtils.LOG.error(e);
+        } finally {
+            close(statement, connection);
+        }
+        return paperEntityList;
+    }
+
+    public static List<QuestionEntity> queryAllQuestions(int paperId) {
+        List<QuestionEntity> questionEntityList = new ArrayList<>();
+        Connection connection = null;
+        PreparedStatement statement = null;
+        try {
+            Class.forName(DB_DRIVER);
+            connection = DriverManager.getConnection(DB_URL);
+            statement = connection.prepareStatement("select ID, PAPER_ID, SOURCE, QUESTION_TYPE, QUESTION_STEM, ANSWER_SELECT, ANSWER, ANSWER_ANALYSIS, CREATE_TIME, UPDATE_TIME from QUESTION where PAPER_ID=? order by ID;");
+            statement.setInt(1, paperId);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                QuestionEntity questionEntity = new QuestionEntity();
+                questionEntity.setId(resultSet.getInt("ID"));
+                questionEntity.setPaperId(resultSet.getInt("PAPER_ID"));
+                questionEntity.setSource(resultSet.getString("SOURCE"));
+                questionEntity.setQuestionType(resultSet.getString("QUESTION_TYPE"));
+                questionEntity.setQuestionStem(resultSet.getString("QUESTION_STEM"));
+                questionEntity.setAnswerSelect(resultSet.getString("ANSWER_SELECT"));
+                questionEntity.setAnswer(resultSet.getString("ANSWER"));
+                questionEntity.setAnswerAnalysis(resultSet.getString("ANSWER_ANALYSIS");
+                questionEntity.setCreateTime(resultSet.getDate("CREATE_TIME"));
+                questionEntity.setUpdateTime(resultSet.getDate("UPDATE_TIME"));
+                questionEntityList.add(questionEntity);
+            }
+
+        } catch (Exception e) {
+            LogUtils.LOG.error(e);
+        } finally {
+            close(statement, connection);
+        }
+        return questionEntityList;
+    }
+
+    public static PaperEntity queryPaperById(int paperId) {
+        PaperEntity paperEntity = null;
+        Connection connection = null;
+        PreparedStatement statement = null;
+        try {
+            Class.forName(DB_DRIVER);
+            connection = DriverManager.getConnection(DB_URL);
+            statement = connection.prepareStatement("select ID,SOURCE_ID,SOURCE_URL, TITLE,SOURCE,PROVINCE,CREATE_TIME,UPDATE_TIME from PAPER where ID= ?");
+            statement.setInt(1, paperId);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                paperEntity = setPaper(resultSet);
+            }
+
+        } catch (Exception e) {
+            LogUtils.LOG.error(e);
+        } finally {
+            close(statement, connection);
+        }
+        return paperEntity;
+    }
+
+    private static PaperEntity setPaper(ResultSet resultSet) throws SQLException {
+        PaperEntity paperEntity = new PaperEntity();
+        paperEntity.setId(resultSet.getInt("ID"));
+        paperEntity.setSourceId(resultSet.getString("SOURCE_ID"));
+        paperEntity.setSourceUrl(resultSet.getString("SOURCE_URL"));
+        paperEntity.setTitle(resultSet.getString("TITLE"));
+        paperEntity.setSource(resultSet.getString("SOURCE"));
+        paperEntity.setProvince(resultSet.getString("PROVINCE"));
+        paperEntity.setCreateTime(resultSet.getDate("CREATE_TIME"));
+        paperEntity.setUpdateTime(resultSet.getDate("UPDATE_TIME"));
+        return paperEntity;
     }
 }

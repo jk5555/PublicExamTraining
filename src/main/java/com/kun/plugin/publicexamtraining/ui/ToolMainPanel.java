@@ -27,7 +27,7 @@ public class ToolMainPanel extends SimpleToolWindowPanel implements Disposable {
         super(Boolean.TRUE, Boolean.TRUE);
         this.toolWindow = toolWindow;
         this.project = project;
-        setLayout(new BorderLayout());
+        setLayout(new GridBagLayout());
 
         // 创建JBTabs实例
         tabs = new JBTabsImpl(project);
@@ -36,7 +36,15 @@ public class ToolMainPanel extends SimpleToolWindowPanel implements Disposable {
         initTabs();
 
         // 将tabs添加到主面板
-        setContent(tabs.getComponent());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+
+        // 将tabs添加到主面板
+        add(tabs.getComponent(), gbc);
         // 初始化加载动画
         initLoadingDialog();
     }

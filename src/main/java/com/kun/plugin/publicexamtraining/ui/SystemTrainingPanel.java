@@ -26,7 +26,7 @@ public class SystemTrainingPanel implements Disposable {
     }
 
     private void init() {
-        jcefHtmlPanel.setHtml(ResourceUtils.loadHtml("/template/test.html"));
+        jcefHtmlPanel.setHtml(ResourceUtils.loadHtml("/template/systemTraining.html"));
     }
 
     public JComponent getComponent() {

@@ -7,12 +7,15 @@ import com.google.common.collect.Lists;
 import com.kun.plugin.publicexamtraining.common.DataConstants;
 import com.kun.plugin.publicexamtraining.data.dao.H2DbManager;
 import com.kun.plugin.publicexamtraining.data.dao.entity.PaperEntity;
+import com.kun.plugin.publicexamtraining.data.dao.entity.QuestionEntity;
 import com.kun.plugin.publicexamtraining.data.model.Paper;
+import com.kun.plugin.publicexamtraining.data.spider.SpiderHelper;
 import com.kun.plugin.publicexamtraining.util.HttpRequestUtils;
 import com.kun.plugin.publicexamtraining.util.LogUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -86,4 +89,29 @@ public class DataService {
     public static void setInitSuccess() {
         H2DbManager.updateInitFlag();
     }
+
+    public static List<PaperEntity> queryPapers(String province) {
+        return H2DbManager.queryPapers(province);
+    }
+
+
+    public static List<QuestionEntity> queryAllQuestions(int paperId) {
+        List<QuestionEntity> questionEntityList = new ArrayList<>();
+        if (paperId > 0) {
+            questionEntityList = H2DbManager.queryAllQuestions(paperId);
+        }
+        if (paperId > 0 && questionEntityList.isEmpty()) {
+            PaperEntity paperEntity = H2DbManager.queryPaperById(paperId);
+            //调用爬虫进行爬取，然后再查一次
+            if (paperEntity != null) {
+                SpiderHelper.spiderPaper(paperEntity.getSourceUrl());
+                questionEntityList = H2DbManager.queryAllQuestions(paperId);
+            }
+        }
+        return questionEntityList;
+
+    }
+
+
+
 }

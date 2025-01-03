@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html data-theme="dark" lang="en">
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1" name="viewport">
@@ -11,12 +11,86 @@
 </head>
 <body>
 <main class="container">
+    <section>
+        <select aria-label="选择试卷省份" id="selectProvince" name="省份" required>
+            <option disabled selected value="">
+                选择试卷省份
+            </option>
+        </select>
+    </section>
+    <section id="paperContent">
 
 
-
-
+    </section>
 </main>
 <script>
+    let paperData = [];
+    let currentProvince = '';
+    document.getElementById('selectProvince').addEventListener('change', function() {
+        let selectedValue = this.value;
+        currentProvince = selectedValue;
+        handleProvinceChange(selectedValue);
+    });
+
+    function refreshDetailsHtml(papers){
+        let paperContent = document.getElementById('paperContent');
+        paperContent.innerHTML = "";
+        for (let paper of papers) {
+            let details = "<details close>" +
+                "            <summary>"+paper.title+"</summary>" +
+                "            <hr /><p>" +
+                "                <small>点击开始答题会进入答题页，并开始计时，提交答案之后会记录分数，中途退出会导致本次答题记录丢失。</small>" +
+                "            </p>" +
+                "            <button aria-busy='false' class='outline' value='"+paper.id+"'  onclick='startExam(this)'>开始答题</button>" +
+                "        </details>";
+            paperContent.innerHTML += details + "<hr />";
+        }
+    }
+
+    function handleProvinceChange(value) {
+        window.queryPaperList({
+            request: value, onSuccess: function (response) {
+                let result = JSON.parse(response);
+                paperData = result;
+                refreshDetailsHtml(result);
+            }, onFailure: function (error_code, error_message) {
+            }
+        });
+
+    }
+
+    function startExam(btn) {
+        btn.disabled = true;
+        let paperId = btn.value;
+        let paper = {};
+        for (let i = 0; i < paperData.length; i++) {
+            if (paperData[i].id == paperId) {
+                paper = paperData[i];
+                break;
+            }
+        }
+        window.location.href = "http://inner/template/exam.html?paperId="+paperId+"&title="+paper.title;
+    }
+
+
+    window.getAllProvince({
+        request: 'getAllProvince', onSuccess: function (response) {
+            let result = JSON.parse(response);
+            let selectProvince = document.getElementById('selectProvince');
+            for (let province of result) {
+                let option = document.createElement('option');
+                option.value = province;
+                option.text = province;
+                if (province === '湖北') {
+                 option.selected = true;
+                 currentProvince = province;
+                }
+                selectProvince.appendChild(option);
+            }
+            handleProvinceChange(currentProvince);
+        }, onFailure: function (error_code, error_message) {
+        }
+    });
 
 
 </script>

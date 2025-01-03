@@ -1,104 +1,139 @@
-<!doctype html>
-<html data-theme="dark" lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta content="width=device-width, initial-scale=1" name="viewport">
-    <meta content="light dark" name="color-scheme">
-    <link href="../css/pico.min.css" rel="stylesheet">
-    <link href="http://inner/css/pico.min.css" rel="stylesheet" type="text/css">
-
-    <title>Hello world!</title>
-<!--    <style>-->
-<!--        :root {-->
-<!--            &#45;&#45;bg-color: #3D3F41FF;-->
-<!--            &#45;&#45;text-color: #A9A9A9FF;-->
-<!--            &#45;&#45;text-size: 15px;-->
-<!--        }-->
-<!--        body {-->
-<!--            background-color: var(&#45;&#45;bg-color);-->
-<!--            color: var(&#45;&#45;text-color);-->
-<!--            font-size: var(&#45;&#45;text-size);-->
-<!--        }-->
-<!--    </style>-->
-</head>
-<body >
-<main class="container" >
-    <h1>Hello world!</h1>
-    <table>
-        <thead>
-        <tr>
-            <th scope="col">Planet</th>
-            <th scope="col">Diameter (km)事实上</th>
-            <th scope="col">Distance to Sun (AU)</th>
-            <th scope="col">Orbit (days)</th>
-        </tr>
-        </thead>
-
-        <tbody>
-        <tr>
-            <th scope="row">Mercury</th>
-            <td>4,880</td>
-            <td>0.39</td>
-            <td>88</td>
-        </tr>
-        <tr>
-            <th scope="row">Venus</th>
-            <td>12,104</td>
-            <td>0.72</td>
-            <td>225</td>
-        </tr>
-        <tr>
-            <th scope="row">Earth</th>
-            <td>12,742</td>
-            <td>1.00</td>
-            <td>365</td>
-        </tr>
-        <tr>
-            <th scope="row">Mars</th>
-            <td>6,779</td>
-            <td>1.52</td>
-            <td>687</td>
-        </tr>
-        </tbody>
-        <tfoot>
-        <tr>
-            <th scope="row">Average</th>
-            <td>9,126</td>
-            <td>0.91</td>
-            <td>341</td>
-        </tr>
-        </tfoot>
-    </table>
-</main>
-<script type="text/javascript">
-    window.onload = function () {
-        alert(123)
-        function f() {
-            alert('f');
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Mobile Webpage</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
         }
-        f();
-        // // //参数可以带过来
-        alert(window.location.href);
-        // window.location.href= 'https://www.baidu.com';
-        window.queryGlobalStyle({
-            request: 'queryGlobalStyle', onSuccess: function (response) {
-                alert(response);
-                let result = JSON.parse(response);
-                let textColor = result.globalColorStyle === 'dark' ?  '#A9A9A9FF' : '#000000FF';
-                let background = result.globalColorStyle === 'dark' ?  '#3D3F41FF' : '#FFFFFF';
-                document.documentElement.style.setProperty('--bg-color', background);
-                document.documentElement.style.setProperty('--text-color', textColor);
-                document.documentElement.style.setProperty('--text-size', result.fontSize + 'px');
-            }, onFailure: function (error_code, error_message) {
-            }
-        });
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #f8f8f8;
+            border-bottom: 1px solid #ccc;
+        }
+        .back-button {
+            background: none;
+            border: none;
+            color: #333;
+            font-size: 18px;
+        }
+        .confirm-button {
+            background: none;
+            border: none;
+            color: #333;
+            font-size: 18px;
+            cursor: not-allowed;
+        }
+        .content {
+            padding: 10px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            background-color: #fff;
+            margin-bottom: 5px;
+        }
+        li.selected {
+            background-color: #eaeaea;
+        }
+        .footer {
+            padding: 10px;
+            background-color: #f8f8f8;
+            border-top: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <button class="back-button">&lt;</button>
+    <button class="confirm-button" disabled>确定</button>
+</div>
+<div class="content">
+    <ul id="dataList">
+        <!-- dynamic list items will be appended here -->
+    </ul>
+</div>
+<div class="footer">
+    Footer Content
+</div>
 
+<details>
+    <summary>Accordion 1</summary>
+    <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque urna diam,
+        tincidunt nec porta sed, auctor id velit. Etiam venenatis nisl ut orci consequat, vitae
+        tempus quam commodo. Nulla non mauris ipsum. Aliquam eu posuere orci. Nulla convallis
+        lectus rutrum quam hendrerit, in facilisis elit sollicitudin. Mauris pulvinar pulvinar
+        mi, dictum tristique elit auctor quis. Maecenas ac ipsum ultrices, porta turpis sit
+        amet, congue turpis.
+    </p>
+</details>
 
+<script>
+    // JavaScript to handle interactions
 
+    // Enable back button functionality
+    document.querySelector('.back-button').addEventListener('click', function() {
+        window.history.back();
+    });
 
+    // Handle item selection and confirm button activation
+    var confirmButton = document.querySelector('.confirm-button');
+    var dataList = document.getElementById('dataList');
+
+    dataList.addEventListener('click', function(e) {
+        if (e.target.tagName === 'LI') {
+            // Add 'selected' class to the clicked item
+            e.target.classList.add('selected');
+
+            // Enable the confirm button
+            confirmButton.disabled = false;
+        }
+    });
+
+    confirmButton.addEventListener('click', function() {
+        // Find the selected item
+        var selectedItem = dataList.querySelector('.selected');
+        if (selectedItem) {
+            // Extract the item's id
+            var itemId = selectedItem.getAttribute('data-id');
+
+            // Send an HTTP request with the item's id
+            // (This is a placeholder; actual implementation depends on your backend)
+            console.log('Sending request with id: ', itemId);
+        }
+    });
+
+    // Function to load more data when scrolling to the bottom
+    window.onscroll = function() {
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+            loadMoreData();
+        }
+    };
+
+    function loadMoreData() {
+        // Append new list items to the data list
+        var newItem = document.createElement('li');
+        newItem.textContent = 'New Item ' + (dataList.children.length + 1);
+        newItem.setAttribute('data-id', dataList.children.length + 1);
+        dataList.appendChild(newItem);
     }
 
-
+    // Initial data load
+    for (var i = 1; i <= 10; i++) {
+        loadMoreData();
+    }
 </script>
 </body>
 </html>
